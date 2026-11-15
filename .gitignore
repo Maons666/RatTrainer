@@ -1,0 +1,10 @@
+.tools/
+analysis/
+dist/
+build/
+test-output/
+.local/
+.vs/
+__pycache__/
+*.pyc
+*.user
