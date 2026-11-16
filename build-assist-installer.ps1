@@ -18,7 +18,7 @@ foreach($file in @('RatAssist.Core.dll','RatAssist.Markers.dll','RatAssist.TeamM
 }
 $manifest=@($entries | ForEach-Object { [pscustomobject]@{Relative=$_.Relative;Hash=(Get-FileHash -LiteralPath $_.Source).Hash} })
 $manifestPath=Join-Path $PSScriptRoot 'build\assist-installer-manifest.json'
-[IO.File]::WriteAllText($manifestPath,([pscustomobject]@{Version='1.0.0';Files=$manifest} | ConvertTo-Json -Depth 5),(New-Object Text.UTF8Encoding($false)))
+[IO.File]::WriteAllText($manifestPath,([pscustomobject]@{Version='1.0.1';Files=$manifest} | ConvertTo-Json -Depth 5),(New-Object Text.UTF8Encoding($false)))
 $payload=Join-Path $PSScriptRoot 'build\assist-installer-payload.zip'
 $stream=[IO.File]::Open($payload,[IO.FileMode]::Create)
 try {
@@ -34,7 +34,7 @@ foreach($reference in @('System','System.Core','Accessibility','System.Drawing',
 foreach($file in @('Controls.cs','InputControls.cs','WindowChrome.cs','Infrastructure.cs','Installer.cs','ComponentInstaller.cs')) { $common+=Join-Path (Join-Path $PSScriptRoot 'desktop') $file }
 $common+=@((Join-Path $PSScriptRoot 'src\Options.cs'),(Join-Path $PSScriptRoot 'src\DesktopProtocol.cs'))
 $common+=Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'assist-installer') -Filter '*.cs' | Select-Object -ExpandProperty FullName
-$output=Join-Path $PSScriptRoot 'dist\RatAssist-Installer-v1.0.exe'
+$output=Join-Path $PSScriptRoot 'dist\RatAssist-Installer-v1.0.1.exe'
 & (Join-Path $framework 'csc.exe') /target:winexe ('/out:'+$output) @common
 if($LASTEXITCODE -ne 0) { throw 'Assist installer compilation failed.' }
 Write-Output ('Standalone installer: '+$output)

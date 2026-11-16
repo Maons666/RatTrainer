@@ -13,6 +13,6 @@ namespace RatTrainerDesktop
         public const string Name = "全能版";
         public const string Subtitle = "小老鼠的大本领，都在这里。";
 #endif
-        public const string Version = "1.3.3";
+        public const string Version = "1.3.4";
     }
 }

@@ -1,4 +1,4 @@
-﻿param([string]$GamePath = 'A:\Steam\steamapps\common\rat game', [switch]$DesktopOnly)
+param([string]$GamePath = 'A:\Steam\steamapps\common\rat game', [switch]$DesktopOnly)
 $ErrorActionPreference = 'Stop'
 Set-Location -LiteralPath $PSScriptRoot
 if(-not $DesktopOnly) { & (Join-Path $PSScriptRoot 'package.ps1') -GamePath $GamePath }
@@ -37,7 +37,7 @@ foreach($art in Get-ChildItem -LiteralPath (Join-Path $PSScriptRoot 'desktop\ass
     $compileArgs += '/resource:' + $art.FullName + ',RatTrainer.Art.' + $art.Name
 }
 foreach($edition in @('All', 'Host')) {
-    $outputPath = Join-Path $PSScriptRoot ('dist\RatTrainer-' + $edition + '-v1.3.3.exe')
+    $outputPath = Join-Path $PSScriptRoot ('dist\RatTrainer-' + $edition + '-v1.3.4.exe')
     $editionArgs = @('/out:' + $outputPath) + $compileArgs
     if($edition -eq 'Host') { $editionArgs = @('/define:HOST_SANDBOX') + $editionArgs }
     & (Join-Path $framework 'csc.exe') @editionArgs

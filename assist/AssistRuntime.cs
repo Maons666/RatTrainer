@@ -84,6 +84,7 @@ namespace RatAssist
                 PlayerController local = Local;
                 string next = !Playing ? "" : Network.GetInstanceID()+":"+UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle+":"+local.NetworkObjectId+":"+SideOf(local);
                 if (next != context) { context=next; Pings.Clear(true); Map.Reset(); World.Reset(); }
+                if ((Features & AssistFeature.Pings) != 0) Pings.Sharing.Tick();
                 if (!Playing) return;
                 if ((Features & AssistFeature.Pings) != 0) Pings.Tick();
                 World.Tick(GameVisible && (Features & AssistFeature.Pings) != 0);
@@ -97,7 +98,7 @@ namespace RatAssist
         public void Notify(string message) { World.Notify(message); if(Log!=null) Log.LogInfo(message); }
         private void OnDestroy()
         {
-            if(Pings!=null) Pings.Clear(true); if(Map!=null) Map.Reset(); if(World!=null) World.Dispose();
+            if(Pings!=null) Pings.Dispose(); if(Map!=null) Map.Reset(); if(World!=null) World.Dispose();
             if(Avatar!=null) UnityEngine.Object.Destroy(Avatar); if(UiFont!=null) UnityEngine.Object.Destroy(UiFont); Instance=null;
         }
     }

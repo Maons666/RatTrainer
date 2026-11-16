@@ -10,6 +10,7 @@ $references=@('mscorlib','System','System.Core','netstandard','Assembly-CSharp',
 $common=@('/nologo','/noconfig','/nostdlib+','/target:library','/optimize+','/codepage:65001')
 foreach($name in $references) { $common += '/reference:'+(Join-Path $managed ($name+'.dll')) }
 $common += '/reference:'+(Join-Path $core 'BepInEx.dll')
+$common += '/reference:'+(Join-Path $core '0Harmony.dll')
 $coreOutput=Join-Path $PSScriptRoot 'build\assist\RatAssist.Core.dll'
 $coreArgs=$common+@(('/out:'+$coreOutput),('/resource:'+(Join-Path $PSScriptRoot 'desktop\assets\rat.png')+',RatAssist.rat.png'))
 $coreArgs+=Get-ChildItem -LiteralPath 'assist' -Filter '*.cs' | Where-Object { $_.Name -notin @('MarkersEntry.cs','MapEntry.cs') } | Select-Object -ExpandProperty FullName
