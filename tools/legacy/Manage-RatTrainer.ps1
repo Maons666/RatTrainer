@@ -50,7 +50,7 @@ if ($Action -eq 'Check') {
     return
 }
 $packagePath = Join-Path $PSScriptRoot 'package-manifest.json'
-if (-not (Test-Path -LiteralPath $packagePath)) { throw 'Run package.ps1 first, then use the installer inside dist\RatTrainer.' }
+if (-not (Test-Path -LiteralPath $packagePath)) { throw 'Run scripts\package.ps1 first, then use the installer inside dist\RatTrainer.' }
 $package = Get-Content -LiteralPath $packagePath -Raw -Encoding UTF8 | ConvertFrom-Json
 $existingCore = GameFile 'BepInEx\core\BepInEx.dll'
 if (Test-Path -LiteralPath $existingCore) {

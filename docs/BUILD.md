@@ -7,12 +7,12 @@
 在 PowerShell 中进入项目根目录：
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build-desktop.ps1 -GamePath 'A:\Steam\steamapps\common\rat game'
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1 -ReusePlugins
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bootstrap.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-desktop.ps1 -GamePath 'A:\Steam\steamapps\common\rat game'
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-assist-installer.ps1 -ReusePlugins
 ```
 
-`bootstrap.ps1` 从官方 Release 下载 BepInEx，并校验下载文件的 SHA-256。完整桌面构建会编译游戏组件、辅助插件和两个桌面程序；独立安装器复用同一套辅助插件。构建不启动游戏，也不会安装到游戏目录。
+`scripts/bootstrap.ps1` 从官方 Release 下载 BepInEx，并校验下载文件的 SHA-256。完整桌面构建会编译游戏组件、辅助插件和两个桌面程序；独立安装器复用同一套辅助插件。构建不启动游戏，也不会安装到游戏目录。
 
 旧命令行安装脚本位于 `tools/legacy/Manage-RatTrainer.ps1`，打包时复制到 `dist/RatTrainer/` 供兼容和隔离测试使用。旧 `.cmd` 入口已移除；普通用户使用 Release 中的 EXE 即可。
 
@@ -22,7 +22,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1
 - `dist/RatTrainer-Host-v1.3.4.exe`
 - `dist/RatAssist-Installer-v1.0.1.exe`
 
-已经完整构建过时，可以用 `build-desktop.ps1 -DesktopOnly` 仅重建桌面程序。清理过 `build/` 后需要重新完整构建。
+已经完整构建过时，可以用 `scripts\build-desktop.ps1 -DesktopOnly` 仅重建桌面程序。清理过 `build/` 后需要重新完整构建。
 
 ## 离线验证
 
@@ -30,7 +30,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\desktop-regression.ps1 -GamePath 'A:\Steam\steamapps\common\rat game'
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1 -ReusePlugins -Test -GamePath 'A:\Steam\steamapps\common\rat game'
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-assist-installer.ps1 -ReusePlugins -Test -GamePath 'A:\Steam\steamapps\common\rat game'
 ```
 
 布局与窗口检查在离线预览中执行，不连接游戏。安装和卸载检查只写入临时模拟目录；它们需要读取目标版本游戏程序集以准备版本校验样本。检查结果生成在 `test-output/`，不提交到仓库。

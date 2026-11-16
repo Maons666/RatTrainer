@@ -1,16 +1,17 @@
 ﻿param([string]$GamePath = 'A:\Steam\steamapps\common\rat game')
 $ErrorActionPreference='Stop'
-Set-Location -LiteralPath $PSScriptRoot
+$projectRoot=Split-Path -Parent $PSScriptRoot
+Set-Location -LiteralPath $projectRoot
 & (Join-Path $PSScriptRoot 'build.ps1') -GamePath $GamePath
 & (Join-Path $PSScriptRoot 'build-assist.ps1') -GamePath $GamePath
-$destination=Join-Path $PSScriptRoot 'dist\RatTrainer'
+$destination=Join-Path $projectRoot 'dist\RatTrainer'
 $coreDestination=Join-Path $destination 'BepInEx\core'
 New-Item -ItemType Directory -Path $coreDestination -Force | Out-Null
 $coreFiles=@(Get-ChildItem -LiteralPath '.tools\bepinex\BepInEx\core' -File)
 foreach($file in $coreFiles) { Copy-Item -LiteralPath $file.FullName -Destination (Join-Path $coreDestination $file.Name) -Force }
 foreach($file in @('winhttp.dll','doorstop_config.ini','.doorstop_version')) { Copy-Item -LiteralPath (Join-Path '.tools\bepinex' $file) -Destination (Join-Path $destination $file) -Force }
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'tools\legacy\Manage-RatTrainer.ps1') -Destination (Join-Path $destination 'Manage-RatTrainer.ps1') -Force
-Copy-Item -LiteralPath (Join-Path $PSScriptRoot 'README.md') -Destination (Join-Path $destination 'README.md') -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'tools\legacy\Manage-RatTrainer.ps1') -Destination (Join-Path $destination 'Manage-RatTrainer.ps1') -Force
+Copy-Item -LiteralPath (Join-Path $projectRoot 'README.md') -Destination (Join-Path $destination 'README.md') -Force
 $files=@($coreFiles | ForEach-Object { Get-Item -LiteralPath (Join-Path $coreDestination $_.Name) })
 $files+=Get-Item -LiteralPath (Join-Path $destination 'BepInEx\plugins\RatTrainer\RatTrainer.dll')
 $files+=Get-Item -LiteralPath (Join-Path $destination 'winhttp.dll'),(Join-Path $destination 'doorstop_config.ini'),(Join-Path $destination '.doorstop_version')

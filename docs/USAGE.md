@@ -67,7 +67,7 @@ v1.3.4 更新地图标点插件与共享 Core 至 1.0.1；收发双方需要退�
 
 作者名为 **MaOnStEr969**。游戏版本要求及阵营规则与下方说明一致：标点共享需要小鼠队友也安装标点插件；实时位置只需本机安装。辅助插件安装后不依赖 Trainer 的总开关，也不需要安装器常驻。
 
-构建：`powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1`。加入 `-ReusePlugins` 复用已有辅助 DLL；加入 `-Test` 执行离线界面和隔离目录安装检查。安装器源码在 `assist-installer/`，验证记录在 `test-output\assist-installer\`。本次未向真实游戏目录安装或恢复游戏运行检测。
+构建：`powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-assist-installer.ps1`。加入 `-ReusePlugins` 复用已有辅助 DLL；加入 `-Test` 执行离线界面和隔离目录安装检查。安装器源码在 `assist-installer/`，验证记录在 `test-output\assist-installer\`。本次未向真实游戏目录安装或恢复游戏运行检测。
 
 ## 独立辅助插件：两个安装按钮
 
@@ -155,15 +155,15 @@ v1.3.3 的离线界面与隔离目录安装卸载检查位于 `test-output\v1.3.
 本机不需要安装新的 .NET SDK。构建使用 Windows 自带的 .NET Framework C# 编译器，并引用本机游戏 DLL。
 
 ```powershell
-powershell -NoProfile -ExecutionPolicy Bypass -File .\bootstrap.ps1
-powershell -NoProfile -ExecutionPolicy Bypass -File .\build-desktop.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\bootstrap.ps1
+powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-desktop.ps1
 ```
 
-`build-desktop.ps1 -GamePath <目录>` 可指定游戏目录。构建会先生成游戏组件，再将加载器、组件与角色图片分别嵌入两个 EXE。房主版通过 `HOST_SANDBOX` 构建配置生成。构建不会自动安装或启动游戏。
+`scripts\build-desktop.ps1 -GamePath <目录>` 可指定游戏目录。构建会先生成游戏组件，再将加载器、组件与角色图片分别嵌入两个 EXE。房主版通过 `HOST_SANDBOX` 构建配置生成。构建不会自动安装或启动游戏。
 
 设计用离线渲染命令为 `RatTrainer-All-v1.3.4.exe --render <输出目录>` 与 `RatTrainer-Host-v1.3.4.exe --render <输出目录>`。预览包含开关开启和关闭的暂存状态，并明确标注未连接游戏；正常启动不使用这些演示设置。
 
-仅重新构建桌面界面可使用 `build-desktop.ps1 -DesktopOnly`，复用已有内嵌组件包。
+仅重新构建桌面界面可使用 `scripts\build-desktop.ps1 -DesktopOnly`，复用已有内嵌组件包。
 
 新增离线回归命令：`powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\desktop-regression.ps1`。安装操作限定在临时模拟目录，跳过真实游戏进程检测。传入 `-UiOnly` 仅检查界面和窗口，不执行安装器测试。
 
