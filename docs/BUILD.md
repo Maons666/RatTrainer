@@ -14,6 +14,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\build-assist-installer.ps1
 
 `bootstrap.ps1` 从官方 Release 下载 BepInEx，并校验下载文件的 SHA-256。完整桌面构建会编译游戏组件、辅助插件和两个桌面程序；独立安装器复用同一套辅助插件。构建不启动游戏，也不会安装到游戏目录。
 
+旧命令行安装脚本位于 `tools/legacy/Manage-RatTrainer.ps1`，打包时复制到 `dist/RatTrainer/` 供兼容和隔离测试使用。旧 `.cmd` 入口已移除；普通用户使用 Release 中的 EXE 即可。
+
 输出：
 
 - `dist/RatTrainer-All-v1.3.4.exe`

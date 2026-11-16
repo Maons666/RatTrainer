@@ -18,7 +18,7 @@ Rat Game（小鼠行动）的 Windows 桌面工具，作者 **MaOnStEr969**。
 | 全能版 | 1.3.4 | [RatTrainer-All-v1.3.4.exe](https://github.com/Maons666/RatTrainer/releases/download/v1.3.4/RatTrainer-All-v1.3.4.exe) | 生存、移动、厨师、任务、外观等功能，以及辅助插件管理 |
 | 辅助插件安装器 | 1.0.1 | [RatAssist-Installer-v1.0.1.exe](https://github.com/Maons666/RatTrainer/releases/download/v1.3.4/RatAssist-Installer-v1.0.1.exe) | 单独安装、更新和卸载地图标点、阵营实时地图 |
 
-下载后可用 Release 附件 `SHA256SUMS.txt` 校验文件。无需下载仓库源码，也无需另装 Python。
+下载后可用 Release 附件 `SHA256SUMS.txt` 校验文件。普通用户只需下载所选应用的 EXE，安装、启动和卸载均可在程序内操作，无需运行命令脚本、下载仓库源码或另装 Python。
 
 ## 快速使用
 
@@ -78,10 +78,13 @@ Rat Game（小鼠行动）的 Windows 桌面工具，作者 **MaOnStEr969**。
 | `assist-installer/` | 独立辅助插件安装器 |
 | `tests/` | 离线回归与单独的游戏测试工具 |
 | `docs/` | 使用说明、构建说明和截图 |
+| `tools/` | 开发工具与旧命令行安装兼容脚本 |
 
 [完整使用说明](docs/USAGE.md) · [构建与测试](docs/BUILD.md) · [本次发布说明](docs/releases/v1.3.4.md) · [游戏美术来源](desktop/assets/SOURCES.md)
 
 源码仓库不包含游戏程序集、反编译分析文件、运行日志、个人配置或旧版 EXE。构建产物在本地 `dist/` 中生成，并通过 GitHub Release 分发。
+
+根目录的 PowerShell 脚本用于开发者构建应用；旧的 `.cmd` 安装、启动与卸载入口已移除。测试仍需使用的旧安装逻辑保存在 `tools/legacy/`。
 
 加载器来自官方 [BepInEx 5.4.23.6 x64](https://github.com/BepInEx/BepInEx/releases/tag/v5.4.23.6)。其依赖和游戏美术归各自权利人所有；本项目为非官方工具。
 

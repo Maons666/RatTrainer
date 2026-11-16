@@ -16,7 +16,7 @@ $exe = GameFile 'Rat Game.exe'
 if (-not (Test-Path -LiteralPath $exe -PathType Leaf)) { throw "Rat Game.exe was not found in $root" }
 $recordPath = GameFile '.rat-trainer-install.json'
 $record = if (Test-Path -LiteralPath $recordPath) { Get-Content -LiteralPath $recordPath -Raw -Encoding UTF8 | ConvertFrom-Json } else { $null }
-if ($Action -ne 'Check' -and $record -and $record.Version -ge 2) { throw 'Use RatTrainer-All-v1.3.exe or RatTrainer-Host-v1.3.exe to manage this shared component installation.' }
+if ($Action -ne 'Check' -and $record -and $record.Version -ge 2) { throw 'Use the desktop Trainer EXE to manage this shared component installation.' }
 if ($Action -ne 'Check') {
     $running = @(Get-Process -Name 'Rat Game' -ErrorAction SilentlyContinue | Where-Object { -not $_.Path -or $_.Path -eq $exe })
     if ($running.Count -gt 0) { throw 'Close Rat Game before installing or uninstalling. Your game will not be terminated automatically.' }
