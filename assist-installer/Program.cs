@@ -9,8 +9,8 @@ using System.Windows.Forms;
 [assembly:AssemblyDescription("Rat Game 地图标点与阵营实时地图独立安装器")]
 [assembly:AssemblyCompany("MaOnStEr969")]
 [assembly:AssemblyProduct("Rat Assist · 辅助插件安装器")]
-[assembly:AssemblyVersion("1.0.1.0")]
-[assembly:AssemblyFileVersion("1.0.1.0")]
+[assembly:AssemblyVersion("1.0.2.0")]
+[assembly:AssemblyFileVersion("1.0.2.0")]
 
 namespace RatTrainerDesktop
 {

@@ -18,15 +18,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\scripts\build-assist-insta
 
 输出：
 
-- `dist/RatTrainer-All-v1.3.4.exe`
-- `dist/RatTrainer-Host-v1.3.4.exe`
-- `dist/RatAssist-Installer-v1.0.1.exe`
+- `dist/RatTrainer-All-v1.3.5.exe`
+- `dist/RatTrainer-Host-v1.3.5.exe`
+- `dist/RatAssist-Installer-v1.0.2.exe`
 
 已经完整构建过时，可以用 `scripts\build-desktop.ps1 -DesktopOnly` 仅重建桌面程序。清理过 `build/` 后需要重新完整构建。
 
 ## 离线验证
 
 标点同步可单独用 `powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\marker-sync.ps1` 验证，需本机 .NET 8 运行时。该测试编译实际标点代码，使用模拟 Steam / Unity 环境，不启动 Steam 连接或游戏。
+
+新增游戏联机转发与回执检查：`powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\network-markers.ps1`。测试通过模拟消息队列运行生产代码，并覆盖 Steam 元数据不传递、厨师房主转发、可靠分片、伪造数据与接收确认；不能替代真实双机验证。
 
 ```powershell
 powershell -NoProfile -ExecutionPolicy Bypass -File .\tests\desktop-regression.ps1 -GamePath 'A:\Steam\steamapps\common\rat game'

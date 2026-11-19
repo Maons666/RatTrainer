@@ -93,7 +93,7 @@ namespace RatTrainerDesktop
             page.Add(markers); page.Add(map);
             markers.Install.Click+=async delegate { await Deploy("markers",false); }; map.Install.Click+=async delegate { await Deploy("map",false); };
             markers.Remove.LinkClicked+=async delegate { await Deploy("markers",true); }; map.Remove.LinkClicked+=async delegate { await Deploy("map",true); };
-            page.Info("Steam 房间共享标点，需要队友也安装标点插件；非 Steam 房间标点仅本机可见。实时位置只需本机安装。安装后可关闭本程序，无需保持 Trainer 开着。",64);
+            page.Info("共享标点请让房主和参与队友都更新标点插件；Ctrl+G 查看同步状态。实时位置只需本机安装。安装后可关闭本程序。",64);
             TableLayoutPanel status=new TableLayoutPanel { Dock=DockStyle.Fill,ColumnCount=2,RowCount=1,Margin=Padding.Empty,Padding=new Padding(Theme.S(24),Theme.S(8),Theme.S(24),Theme.S(8)),BackColor=Theme.Surface };
             status.ColumnStyles.Add(new ColumnStyle(SizeType.Percent,100)); status.ColumnStyles.Add(new ColumnStyle(SizeType.Absolute,Theme.S(190))); root.Controls.Add(status,0,2);
             footer=Theme.Label(preview?"离线界面预览 · 未读取安装状态":"请先关闭游戏，再安装或卸载插件。",9f,Theme.Muted,false); footer.Dock=DockStyle.Fill; footer.AutoEllipsis=true; footer.TextAlign=ContentAlignment.MiddleLeft; status.Controls.Add(footer,0,0);

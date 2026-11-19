@@ -50,7 +50,7 @@ internal static class MarkerSyncTests
         Sim.Set(guest.Steam,PingProtocol.DataKey,"{broken"); Sim.Step(host); Check(!Sees(host,guest),"malformed peer JSON does not stop the receiver");
         Sim.Set(guest.Steam,PingProtocol.DataKey,new string('x',4097)); Sim.Step(host); Check(!Sees(host,guest),"oversized peer metadata is ignored");
         Sim.Set(guest.Steam,PingProtocol.DataKey,good); Sim.Step(host); Check(Sees(host,guest),"valid peer data recovers after malformed metadata");
-        guest.Player.OwnerClientId=99; Sim.Step(host); Check(!Sees(host,guest),"network ownership must match the marker client"); guest.Player.OwnerClientId=7;
+        guest.Player.OwnerClientId=99; Sim.Step(host); Check(Sees(host,guest),"current controlling-player identity remains valid independently of object ownership"); guest.Player.OwnerClientId=7;
         guest.Player.IsSpawned=false; Sim.Step(host); Check(!Sees(host,guest),"despawned characters cannot leave visible markers"); guest.Player.IsSpawned=true;
         guest.Player.Side=Side.Chef; Sim.Step(host); Check(!Sees(host,guest),"rats never accept a chef's remote marker");
         Sim.Use(guest); guest.Pings.Clear(true); Sim.Step(guest); Place(guest);

@@ -84,7 +84,7 @@ namespace RatAssist
                 PlayerController local = Local;
                 string next = !Playing ? "" : Network.GetInstanceID()+":"+UnityEngine.SceneManagement.SceneManager.GetActiveScene().handle+":"+local.NetworkObjectId+":"+SideOf(local);
                 if (next != context) { context=next; Pings.Clear(true); Map.Reset(); World.Reset(); }
-                if ((Features & AssistFeature.Pings) != 0) Pings.Sharing.Tick();
+                if ((Features & AssistFeature.Pings) != 0) { Pings.Network.Tick(); Pings.Sharing.Tick(); }
                 if (!Playing) return;
                 if ((Features & AssistFeature.Pings) != 0) Pings.Tick();
                 World.Tick(GameVisible && (Features & AssistFeature.Pings) != 0);

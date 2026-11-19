@@ -38,7 +38,7 @@ foreach($art in Get-ChildItem -LiteralPath (Join-Path $projectRoot 'desktop\asse
     $compileArgs += '/resource:' + $art.FullName + ',RatTrainer.Art.' + $art.Name
 }
 foreach($edition in @('All', 'Host')) {
-    $outputPath = Join-Path $projectRoot ('dist\RatTrainer-' + $edition + '-v1.3.4.exe')
+    $outputPath = Join-Path $projectRoot ('dist\RatTrainer-' + $edition + '-v1.3.5.exe')
     $editionArgs = @('/out:' + $outputPath) + $compileArgs
     if($edition -eq 'Host') { $editionArgs = @('/define:HOST_SANDBOX') + $editionArgs }
     & (Join-Path $framework 'csc.exe') @editionArgs

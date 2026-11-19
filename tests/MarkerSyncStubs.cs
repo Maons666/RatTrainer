@@ -19,9 +19,10 @@ internal sealed class Peer
     public Peer(ulong steam,ulong client,ulong actor,Side side,int network)
     {
         Steam=steam; Player=new PlayerController { ControllingClientIdVar=new NetValue<ulong>(client),OwnerClientId=client,NetworkObjectId=actor,Side=side };
-        Network=new Unity.Netcode.NetworkManager { InstanceId=network };
+        Network=new Unity.Netcode.NetworkManager { InstanceId=network,LocalClientId=client,IsServer=client==0 };
         Game=new GameManager(); LobbyManager.CurrentLobby=new Steamworks.Data.Lobby(900);
         Pings=new TeamPings(App);
+        Sim.Peers[client]=this;
     }
 }
 internal static class Sim
@@ -30,13 +31,38 @@ internal static class Sim
     public static readonly HashSet<ulong> Members=new HashSet<ulong>();
     public static readonly Dictionary<ulong,Dictionary<string,string>> Data=new Dictionary<ulong,Dictionary<string,string>>();
     public static readonly List<PlayerController> Players=new List<PlayerController>();
+    public static readonly Dictionary<ulong,Peer> Peers=new Dictionary<ulong,Peer>();
+    public static bool EnableNetwork,BlockMetadata,DropReceipts;
+    public sealed class Wire { public ulong From,To; public string Name,Data; }
+    public static readonly Queue<Wire> Wires=new Queue<Wire>();
+    public static int FragmentedSends;
     public static TaskCompletionSource<Steamworks.Data.Lobby?> Join;
     public static MethodInfo Prefix;
     public static int JoinCalls,ReconnectCalls,Leaves;
     public static bool FailNextWrite,FailMembership;
     public static void Use(Peer peer) { Active=peer; GameManager.instance=peer.Game; SteamNetworkManager.instance=peer.LobbyManager; }
     public static void Step(Peer peer)
-    { Use(peer); UnityEngine.Time.unscaledTime+=.6f; peer.Pings.Sharing.Tick(); peer.Pings.Tick(); }
+    { Use(peer); UnityEngine.Time.unscaledTime+=.6f; if(EnableNetwork) peer.Pings.Network.Tick(); peer.Pings.Sharing.Tick(); peer.Pings.Tick(); }
+    public static void Pump()
+    {
+        Peer previous=Active; int budget=1000;
+        while(Wires.Count>0)
+        {
+            if(--budget==0) throw new Exception("Unexpected network message loop");
+            Wire wire=Wires.Dequeue(); Peer peer;
+            if(!Peers.TryGetValue(wire.To,out peer)||!peer.Network.IsListening||DropReceipts&&wire.Data.Contains("\"receipt\"")) continue;
+            Action<ulong,Unity.Netcode.FastBufferReader> callback;
+            if(!peer.Network.CustomMessagingManager.Handlers.TryGetValue(wire.Name,out callback)) continue;
+            Use(peer); callback(wire.From,new Unity.Netcode.FastBufferReader { Data=wire.Data });
+        }
+        Use(previous);
+    }
+    public static void Reset()
+    {
+        Peers.Clear(); Players.Clear(); Members.Clear(); Data.Clear(); Wires.Clear();
+        EnableNetwork=true; BlockMetadata=true; DropReceipts=false; FailMembership=false; FailNextWrite=false;
+        UnityEngine.Time.unscaledTime=1; Steamworks.SteamClient.IsValid=true; Prefix=null;
+    }
     public static void EnterCallback(ulong id)
     {
         object[] args={new Steamworks.Data.Lobby(id)};
@@ -146,7 +172,7 @@ namespace UnityEngine.InputSystem
     public sealed class Keyboard
     {
         public static Keyboard current;
-        public KeyControl leftShiftKey=new KeyControl(),rightShiftKey=new KeyControl();
+        public KeyControl leftShiftKey=new KeyControl(),rightShiftKey=new KeyControl(),leftCtrlKey=new KeyControl(),rightCtrlKey=new KeyControl();
         public KeyControl this[Key key] { get { return new KeyControl(); } }
     }
 }
@@ -155,6 +181,11 @@ namespace Unity.Netcode
     public sealed class NetworkTime { public double Time=100; }
     public sealed class NetworkManager
     {
+        public const ulong ServerClientId=0;
+        public ulong LocalClientId;
+        public bool IsServer;
+        public IEnumerable<ulong> ConnectedClientsIds { get { return Sim.Peers.Where(x=>x.Value.Network.IsListening).Select(x=>x.Key).ToArray(); } }
+        public CustomMessagingManager CustomMessagingManager=new CustomMessagingManager();
         public bool IsListening=true,IsConnectedClient=true;
         public int InstanceId;
         public NetworkTime ServerTime=new NetworkTime();
@@ -163,7 +194,34 @@ namespace Unity.Netcode
     }
     public sealed class SpawnManager { public Dictionary<ulong,NetworkObject> SpawnedObjects=new Dictionary<ulong,NetworkObject>(); }
     public sealed class NetworkObject { public bool IsSpawned; public ulong NetworkObjectId; public UnityEngine.Transform transform=new UnityEngine.Transform(); }
+    public enum NetworkDelivery { ReliableSequenced,ReliableFragmentedSequenced }
+    public sealed class CustomMessagingManager
+    {
+        public readonly Dictionary<string,Action<ulong,FastBufferReader>> Handlers=new Dictionary<string,Action<ulong,FastBufferReader>>();
+        public void RegisterNamedMessageHandler(string name,Action<ulong,FastBufferReader> handler) { Handlers.Add(name,handler); }
+        public void UnregisterNamedMessageHandler(string name) { Handlers.Remove(name); }
+        public void SendNamedMessage(string name,ulong target,FastBufferWriter writer,NetworkDelivery delivery)
+        {
+            if(writer.Data.Length*2>1200&&delivery!=NetworkDelivery.ReliableFragmentedSequenced) throw new InvalidOperationException("Message exceeds simulated unfragmented MTU");
+            if(delivery==NetworkDelivery.ReliableFragmentedSequenced) Sim.FragmentedSends++;
+            Sim.Wires.Enqueue(new Sim.Wire { From=Sim.Active.Network.LocalClientId,To=target,Name=name,Data=writer.Data });
+        }
+    }
+    public struct FastBufferWriter : IDisposable
+    {
+        public string Data;
+        public FastBufferWriter(int size,Unity.Collections.Allocator allocator) { Data=null; }
+        public void WriteValueSafe(string data) { Data=data; }
+        public void Dispose() { }
+    }
+    public struct FastBufferReader
+    {
+        public string Data;
+        public int Length { get { return Data.Length*2+4; } }
+        public void ReadValueSafe(out string data,bool ascii) { data=Data; }
+    }
 }
+namespace Unity.Collections { public enum Allocator { Temp } }
 namespace Steamworks
 {
     public struct SteamId
@@ -205,7 +263,7 @@ namespace Steamworks.Data
             if(Sim.Members.Contains(Sim.Active.Steam)) Sim.Set(Sim.Active.Steam,key,value);
         }
         public string GetMemberData(Steamworks.Friend member,string key)
-        { return Sim.Members.Contains(Sim.Active.Steam)?Sim.Get(member.Id,key):""; }
+        { return !Sim.BlockMetadata&&Sim.Members.Contains(Sim.Active.Steam)?Sim.Get(member.Id,key):""; }
         public void Leave() { Sim.Leaves++; Sim.Members.Remove(Sim.Active.Steam); }
     }
 }

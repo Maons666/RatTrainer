@@ -50,7 +50,7 @@ namespace RatTrainerDesktop
             mapInstall.Install.Click+=async delegate { await DeployAuxiliary("map",false); };
             markerInstall.Remove.LinkClicked+=async delegate { await DeployAuxiliary("markers",true); };
             mapInstall.Remove.LinkClicked+=async delegate { await DeployAuxiliary("map",true); };
-            page.Info("标点共享：Steam 房间里的小鼠队友也需安装“地图标点”插件；不要求房主安装 Trainer。非 Steam 房间暂提供本机标点。",64);
+            page.Info("共享标点请让房主和参与队友都更新标点插件；房主无需开启 Trainer 或客机协同。游戏内 Ctrl+G 查看同步状态。",64);
             page.Info("需要移除时，先关闭游戏，再点击对应卡片的“卸载此插件”。只移除选中的插件；另一项辅助功能和 Trainer 会保留。Trainer 总开关和 F10 不影响辅助插件。",64);
             RefreshAuxiliaryStatus();
         }

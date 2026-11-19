@@ -9,8 +9,8 @@ using System.IO;
 [assembly: AssemblyDescription("Rat Game standalone desktop trainer")]
 [assembly: AssemblyCompany("Local Tools")]
 [assembly: AssemblyProduct("Rat Trainer · " + RatTrainerDesktop.Edition.Name)]
-[assembly: AssemblyVersion("1.3.4.0")]
-[assembly: AssemblyFileVersion("1.3.4.0")]
+[assembly: AssemblyVersion("1.3.5.0")]
+[assembly: AssemblyFileVersion("1.3.5.0")]
 
 namespace RatTrainerDesktop
 {
